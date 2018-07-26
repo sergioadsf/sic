@@ -1,6 +1,8 @@
 package br.com.conectasol.elastic;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.http.HttpHost;
@@ -27,7 +29,10 @@ public class IndexarDoc {
 			if (f.isFile() && name.contains(".pdf")) {
 				pdfExtractor = new PDFExtractor(f);
 				
-				IndexRequest request = new IndexRequest("proposta", "proposta", UUID.randomUUID().toString()).source("message", pdfExtractor.getDocumentText());
+				Map<String, Object> map = new HashMap<>();
+				map.put("message", pdfExtractor.getDocumentText());
+				map.put("name", f.getName());
+				IndexRequest request = new IndexRequest("proposta", "proposta", UUID.randomUUID().toString()).source(map);
 //				pdfExtractor.save(OUT + name.replaceAll(".pdf", ".txt"));
 				client.index(request);
 			}
